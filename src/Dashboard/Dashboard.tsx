@@ -73,7 +73,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         const token = localStorage.getItem("token") as string
-
+//!Get all the task
         const fetchTask = async() => {
             const api = await fetch("http://localhost:3002/api/tasks", {
                 method: "GET",
@@ -93,7 +93,7 @@ const Dashboard = () => {
         fetchTask() 
     }, [])
 
-
+//!Toggle task as done or not
     const toggleTask = async (  
                 taskId: string,
                 currentStatus: boolean 
@@ -121,6 +121,26 @@ const Dashboard = () => {
     prevTasks.map(t=> t.id === taskId ? {...t, taskStatus: !t.taskStatus}
         :t)
     )
+    }
+
+    //!Delete task
+
+    const deleteTask = async(taskId:string) => {
+        const token = localStorage.getItem("token")
+        const api = await fetch(`http://localhost:3002/api/tasks/${taskId}`,{
+            method: "DELETE",
+            headers: {
+                "Content-Type":"application/json",
+                "Authorization":`Bearer ${token}`
+            }
+        }
+    )
+    if(!api.ok){
+        // console.log("Can't delete the task");
+        return
+    }
+
+    setTasks((prevTask)=> prevTask.filter((t)=> t.id !== taskId))
 
     }
 
@@ -149,6 +169,7 @@ const Dashboard = () => {
                             
                             <button 
                                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400 transition-colors"
+                                onClick={()=>deleteTask(task.id)}
                             >
                                 Delete
                             </button>
