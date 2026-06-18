@@ -77,7 +77,10 @@ const Dashboard = () => {
         const fetchTask = async() => {
             const api = await fetch("http://localhost:3002/api/tasks", {
                 method: "GET",
-                headers: { "Authorization": `Bearer ${token}` },
+                headers: { 
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type":"application/json"
+            },
             })
             if(!api.ok) {
                 console.log("can't fetch the tasks rn");
@@ -95,9 +98,14 @@ const Dashboard = () => {
                 taskId: string,
                 currentStatus: boolean 
             ) =>{
+
+                const token = localStorage.getItem("token")
         const api = await fetch(`http://localhost:3002/api/tasks/${taskId}`,{
             method: "PUT",
-            headers: {"Content-Type":"application/json"},
+            headers: {
+                "Content-Type":"application/json",
+                "Authorization":`Bearer ${token}`
+            },
             body:JSON.stringify({
                 taskStatus: !currentStatus
             })
@@ -131,7 +139,7 @@ const Dashboard = () => {
                                 <input 
                                     type="checkbox" 
                                     checked={task.taskStatus}
-                                    onChange={toggleTask()}
+                                    onChange={()=>toggleTask(task.id, task.taskStatus)}
                                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                 />
                                 <span className={`text-gray-700 font-medium ${task.taskStatus ? 'line-through text-gray-400' : ''}`}>
